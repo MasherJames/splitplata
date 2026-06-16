@@ -46,6 +46,8 @@ export interface GroupStore {
   load(): Promise<void>;
 
   createGroup(input: NewGroupInput): Group;
+  /** Add a shared group, or replace the existing one with the same id (snapshot sync). */
+  importGroup(group: Group): void;
   getGroup(id: string): Group | undefined;
   renameGroup(groupId: string, name: string): void;
   deleteGroup(groupId: string): void;
@@ -115,6 +117,15 @@ export function createGroupStore(
       const group = makeGroup(input);
       commit([...state.groups, group]);
       return group;
+    },
+
+    importGroup(group) {
+      const exists = state.groups.some((g) => g.id === group.id);
+      commit(
+        exists
+          ? state.groups.map((g) => (g.id === group.id ? group : g))
+          : [...state.groups, group],
+      );
     },
 
     getGroup(id) {

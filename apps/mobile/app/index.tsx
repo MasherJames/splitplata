@@ -79,6 +79,12 @@ export default function GroupsScreen() {
           ))
         )}
       </View>
+
+      <Link href="/import" asChild>
+        <Pressable style={{ alignItems: "center", paddingVertical: 8 }}>
+          <Text style={{ color: "#2f6f4f", fontWeight: "600" }}>Import a shared group →</Text>
+        </Pressable>
+      </Link>
     </ScrollView>
   );
 }

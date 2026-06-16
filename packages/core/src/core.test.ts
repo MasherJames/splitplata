@@ -21,6 +21,11 @@ import {
   deserializeGroups,
   settlementPlan,
   simplifyBalances,
+  buildSharePath,
+  decodeShareInput,
+  extractShareToken,
+  toCSV,
+  toSummaryHtml,
 } from "./index.js";
 import type { Expense, Group } from "./types.js";
 
@@ -340,6 +345,88 @@ describe("repo serialization", () => {
     expect(deserializeGroups(null)).toEqual([]);
     expect(deserializeGroups("not json")).toEqual([]);
     expect(deserializeGroups(JSON.stringify({ v: 999, groups: [] }))).toEqual([]);
+  });
+});
+
+describe("share links", () => {
+  it("round-trips a group through a share URL", () => {
+    let g = trio();
+    g = addExpense(
+      g,
+      {
+        description: "Hotel",
+        amount: 3000,
+        payerId: g.members[0]!.id,
+        participantIds: g.members.map((m) => m.id),
+        splitMode: "equal",
+        date: T,
+      },
+      T,
+    );
+    const url = `https://splitplata.app${buildSharePath(g)}`;
+    expect(decodeShareInput(url)).toEqual(g);
+  });
+
+  it("extracts a token from a URL, a hash, or a bare token", () => {
+    const g = trio();
+    const path = buildSharePath(g); // /import?d=<token>
+    const token = path.split("=")[1]!;
+    expect(extractShareToken(`https://x.app${path}`)).toBe(token);
+    expect(extractShareToken(`splitplata://import${path.replace("?", "#")}`)).toBe(token);
+    expect(extractShareToken(token)).toBe(token);
+    expect(extractShareToken("just some text")).toBeNull();
+  });
+
+  it("throws on input with no share code", () => {
+    expect(() => decodeShareInput("https://example.com/")).toThrow(/no share code/i);
+  });
+});
+
+describe("CSV export", () => {
+  it("emits a header plus a row per expense and payment, date-sorted", () => {
+    let g = trio();
+    const { ann, bob, cara } = ids(g);
+    g = addExpense(
+      g,
+      {
+        description: "Din, ner",
+        amount: 3000,
+        payerId: ann,
+        participantIds: [ann, bob, cara],
+        splitMode: "equal",
+        date: "2026-01-02",
+      },
+      T,
+    );
+    g = addPayment(g, { fromId: bob, toId: ann, amount: 1000, date: "2026-01-01" }, T);
+
+    const csv = toCSV(g);
+    const lines = csv.trimEnd().split("\r\n");
+    expect(lines[0]).toContain("Date,Type,Description");
+    expect(lines).toHaveLength(3);
+    // Payment (Jan 1) sorts before the expense (Jan 2).
+    expect(lines[1]).toContain("Payment");
+    expect(lines[2]).toContain("Expense");
+    // Field with a comma is quoted.
+    expect(csv).toContain('"Din, ner"');
+  });
+});
+
+describe("HTML summary", () => {
+  it("includes the group name, balances, and is well-formed-ish", () => {
+    const g = trio();
+    const html = toSummaryHtml(g, "2026-06-16");
+    expect(html).toContain("<!doctype html>");
+    expect(html).toContain("Trip");
+    expect(html).toContain("exported 2026-06-16");
+    expect(html).toContain("Balances");
+  });
+
+  it("escapes HTML-special characters in names", () => {
+    let g = createGroup({ name: "A & <b>", memberNames: ["<x>"], now: T });
+    const html = toSummaryHtml(g, T);
+    expect(html).toContain("A &amp; &lt;b&gt;");
+    expect(html).not.toContain("<b>");
   });
 });
 

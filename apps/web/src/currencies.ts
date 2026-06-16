@@ -1,2 +1,4 @@
-/** A short, common-currency picker. Not exhaustive — just the frequent ones. */
-export const CURRENCIES = ["USD", "EUR", "GBP", "JPY", "INR", "CAD", "AUD", "CHF"] as const;
+/** Supported currencies. KES is the default (listed first). */
+export const CURRENCIES = ["KES", "USD", "EUR"] as const;
+
+export const DEFAULT_CURRENCY = CURRENCIES[0];

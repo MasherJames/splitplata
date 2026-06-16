@@ -15,6 +15,7 @@ export default function RootLayout() {
         <Stack.Screen name="index" options={{ title: "Splitplata" }} />
         {/* Title is set dynamically from the group name inside the screen. */}
         <Stack.Screen name="group/[id]" options={{ title: "Group" }} />
+        <Stack.Screen name="import" options={{ title: "Import group" }} />
       </Stack>
     </>
   );

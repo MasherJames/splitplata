@@ -65,7 +65,7 @@ export function PaymentForm({ group, initial }: { group: Group; initial?: Paymen
       <input value={note} onChange={(e) => setNote(e.target.value)} placeholder="Note (optional)" />
 
       {error && <p className="error">{error}</p>}
-      <button type="submit">Record payment</button>
+      <button type="submit">Save payment</button>
     </form>
   );
 }

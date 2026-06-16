@@ -14,6 +14,7 @@ import { groupStore } from "../../store";
 import { confirmDelete, styles } from "../index";
 import { ExpenseForm } from "../../components/ExpenseForm";
 import { PaymentForm, type PaymentPrefill } from "../../components/PaymentForm";
+import { ShareExport } from "../../components/ShareExport";
 
 /** Group detail: rename the group and manage its members. */
 export default function GroupScreen() {
@@ -102,6 +103,11 @@ export default function GroupScreen() {
           <ExpenseForm group={group} />
         </View>
       )}
+
+      <View style={styles.card}>
+        <Text style={styles.cardTitle}>SHARE & EXPORT</Text>
+        <ShareExport group={group} />
+      </View>
 
       <BalancesAndSettlement group={group} onRecord={onRecord} />
 

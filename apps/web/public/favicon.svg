@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Splitplata">
+  <!-- A coin split in two: the app's core idea in one mark. The transparent
+       gap down the middle is the "split". -->
+  <path d="M15 2 a14 14 0 0 0 0 28 Z" fill="#0b3b36"/>
+  <path d="M17 2 a14 14 0 0 1 0 28 Z" fill="#16c098"/>
+</svg>
