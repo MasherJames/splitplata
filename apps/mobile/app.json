@@ -1,0 +1,26 @@
+{
+  "expo": {
+    "name": "Splitplata",
+    "slug": "splitplata",
+    "scheme": "splitplata",
+    "version": "0.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.splitplata.app"
+    },
+    "android": {
+      "package": "com.splitplata.app"
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static"
+    },
+    "plugins": ["expo-router"],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
