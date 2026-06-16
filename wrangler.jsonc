@@ -1,0 +1,15 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "splitplata",
+  "compatibility_date": "2026-06-16",
+  // Assets-only Worker: no `main` script — Cloudflare serves the built SPA
+  // directly. The directory is resolved relative to this file (the repo root),
+  // so we point at the web app's Vite output.
+  "assets": {
+    "directory": "./apps/web/dist",
+    "not_found_handling": "single-page-application"
+  },
+  "observability": {
+    "enabled": true
+  }
+}
