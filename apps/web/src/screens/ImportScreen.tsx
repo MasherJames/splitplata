@@ -30,24 +30,37 @@ export function ImportScreen() {
     navigate(`/g/${decoded.group.id}`);
   };
 
+  const exists = decoded.group ? groupStore.getGroup(decoded.group.id) : undefined;
+
   return (
     <main className="app">
-      <header>
-        <Link className="link back" to="/">← Groups</Link>
+      <Link className="link back" to="/">← Groups</Link>
+
+      <div className="import-hero">
+        <span className="import-hero-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor"
+            strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 3v12" />
+            <path d="M7 10l5 5 5-5" />
+            <path d="M5 21h14" />
+          </svg>
+        </span>
         <h1>Import a group</h1>
-        <p className="sub">Open a shared link or paste a share code.</p>
-      </header>
+        <p className="sub">Paste a share link or code to add it to this device.</p>
+      </div>
 
       {!fromUrl && (
         <section className="card">
-          <h2>Paste a link or code</h2>
-          <textarea
-            className="grow"
-            value={pasted}
-            onChange={(e) => setPasted(e.target.value)}
-            placeholder="https://…/import?d=…  or the raw code"
-            rows={3}
-          />
+          <label className="formfield">
+            <span className="formlabel">Share link or code</span>
+            <textarea
+              value={pasted}
+              onChange={(e) => setPasted(e.target.value)}
+              placeholder="https://…/import?d=…   or the raw code"
+              rows={3}
+              autoFocus
+            />
+          </label>
         </section>
       )}
 
@@ -58,31 +71,41 @@ export function ImportScreen() {
       )}
 
       {decoded.group && (
-        <section className="card">
-          <h2>Preview</h2>
-          <div className="list">
-            <div className="row between">
-              <strong>{decoded.group.name}</strong>
-              <span className="muted">{decoded.group.currency}</span>
+        <section className="card preview-card">
+          <div className="preview-head">
+            <div>
+              <p className="preview-kicker">You're importing</p>
+              <div className="preview-name">{decoded.group.name}</div>
             </div>
-            <p className="muted">
-              {decoded.group.members.length} members · {decoded.group.expenses.length} expenses ·{" "}
-              {decoded.group.payments.length} payments
-            </p>
+            <span className="badge">{decoded.group.currency}</span>
           </div>
-          {groupStore.getGroup(decoded.group.id) && (
-            <p className="muted">
-              You already have this group — importing will overwrite it with the shared version.
+
+          {decoded.group.members.length > 0 && (
+            <div className="chips">
+              {decoded.group.members.map((m) => (
+                <span key={m.id} className="chip">{m.name}</span>
+              ))}
+            </div>
+          )}
+
+          <div className="preview-stats">
+            <span><strong>{decoded.group.members.length}</strong> members</span>
+            <span><strong>{decoded.group.expenses.length}</strong> expenses</span>
+            <span><strong>{decoded.group.payments.length}</strong> payments</span>
+          </div>
+
+          {exists && (
+            <p className="note">
+              You already have this group — importing overwrites it with the shared version.
             </p>
           )}
-          <button onClick={onImport}>Import group</button>
+
+          <button className="block" onClick={onImport}>Import group</button>
         </section>
       )}
 
-      {!source && (
-        <section className="card">
-          <p className="muted">Nothing to import yet.</p>
-        </section>
+      {!source && !decoded.error && (
+        <p className="empty">Nothing to import yet — paste a link or code above.</p>
       )}
     </main>
   );
